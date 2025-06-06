@@ -489,6 +489,9 @@ button:hover {
   padding: 50px;
   background-color: #f9f9f9;
   text-align: center;
+  text-align: center;
+  line-height: 2rem;
+  gap: 10px;
 }
 
 .hire-me-section h2 {
@@ -496,10 +499,23 @@ button:hover {
   margin-bottom: 10px;
 }
 
-.hire-me-section button {
+.hire-me-section p{
+    padding: 1.5rem;
+}
+
+.hire-me-section button{
   background-color: #0e7490;
   color: white;
   border: none;
+  padding: 12px 25px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.hire-me-section input{
+  color: white;
+  border: 1px solid black;
   padding: 12px 25px;
   font-size: 1rem;
   border-radius: 5px;
@@ -601,6 +617,12 @@ button:hover {
         margin: 0 auto;
         position: relative;
     }
+
+    .hire-me-section {
+        display: flex;
+        flex-direction: column;
+    }
+
     .footer {
         position: inherit;
         bottom: 0;
