@@ -522,6 +522,7 @@ button:hover {
     .main-wrap {
         flex-direction: column;
         align-items: center;
+        justify-content: space-between;
     }
     
     .main {
@@ -540,17 +541,6 @@ button:hover {
         text-align: center; /* Better mobile alignment */
     }
 
-    .cntrl{
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-   .cntrl .dots-container{
-       display: none;
-       width: 100%;
-    }
-
-
     /* Adjust typing animation for wrapped text */
     @keyframes typing {
         from { 
@@ -561,6 +551,34 @@ button:hover {
             width: 100%;
             height: auto;
         }
+    }
+
+     .cntrl{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+   .cntrl .dots-container{
+       display: none;
+       width: 100%;
+    }
+    #sectionAboutMe{
+        display: block;
+    }
+    #sectionPortfolio {
+        display: block;
+        min-height: 100%;
+        padding-bottom: 680px;
+    }
+
+    .slider-container {
+        max-width: 100%;
+        margin: 0 auto;
+        position: relative;
+    }
+    .footer {
+        position: inherit;
+        bottom: 0;
     }
 }
 
