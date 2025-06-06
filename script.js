@@ -257,5 +257,37 @@ document.addEventListener("DOMContentLoaded", function () {
      if (yearSpan) {
          yearSpan.textContent = `© ${new Date().getFullYear()} Fatai Dawodu. All rights reserved.`;
      }
+
+    document.getElementById('payButton').addEventListener('click', function () {
+        const emailInput = document.getElementById("userEmail");
+        const email = emailInput.value.trim();
+
+        if (!email) {
+            alert("Please enter your email before proceeding.");
+            return;
+        }
+
+        var handler = PaystackPop.setup({
+            key: 'pk_test_c854323157ed47be1a606fcea3c7b9172151c835', // your public key
+            email: email,
+            amount: 500000, // kobo
+            currency: "NGN",
+            callback: function (response) {
+                alert("Payment complete! Ref: " + response.reference);
+
+                // Redirect to WhatsApp chat
+                const whatsappMessage = `Hello, I've just made a payment. My email is ${encodeURIComponent(email)}. Ref: ${encodeURIComponent(response.reference)}`;
+                const whatsappLink = `https://wa.me/2348137872189?text=${whatsappMessage}`;
+
+                window.location.href = whatsappLink;
+            },
+            onClose: function () {
+                alert("Payment window closed.");
+            }
+        });
+
+        handler.openIframe();
+    });
+
     
 });

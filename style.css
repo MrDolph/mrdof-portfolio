@@ -485,6 +485,31 @@ button:hover {
     gap:5px;
 }
 
+.hire-me-section {
+  padding: 50px;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.hire-me-section h2 {
+  font-size: 2rem;
+  margin-bottom: 10px;
+}
+
+.hire-me-section button {
+  background-color: #0e7490;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  font-size: 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.hire-me-section button:hover {
+  background-color: #0f766e;
+}
+
 
 /* Mobile Optimization */
 
