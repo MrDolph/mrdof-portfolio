@@ -93,9 +93,8 @@ body {
     display: grid;
     grid-template-columns: 1fr 2fr;
     gap: 3rem;
-    align-items: center;
+    align-items: flex-start;
     padding: 2rem;
-    /* background-color: red; */
 }
 
 .profile-img {
@@ -104,7 +103,6 @@ body {
     border-radius: 15px;
     border-radius: 0 10% 0 10%;
     box-shadow: var(--shadow);
-    /* border: 1px solid white; */
 }
 
 /* Add these CSS rules for Typewriter effect */
@@ -321,6 +319,69 @@ button:hover {
     background: var(--primary);
     color: white;
 }
+
+#calendar {
+  width: 100%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1rem;
+  box-sizing: border-box;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  overflow-x: auto; /* prevent layout breaks */
+}
+
+/* Make the header flexible for long month names */
+/* .fc-toolbar-title {
+  font-size: 1.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+} */
+
+.fc-toolbar-title {
+  font-size: 1.5rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.fc-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+
+/* Shrink toolbar controls on small screens */
+@media (max-width: 768px) {
+  .fc-toolbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .fc-toolbar-title {
+    font-size: 1.2rem;
+    width: 100%;
+    text-align: center;
+  }
+
+  .fc-button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .fc {
+    font-size: 0.85rem;
+  }
+}
+
 
 .contact {
     display: flex;
