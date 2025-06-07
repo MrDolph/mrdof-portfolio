@@ -34,7 +34,6 @@ html {
     scroll-padding-top: 130px; /* Adjust based on your header height */
 }
 
-
 body {
     background: var(--light);
     color: var(--text);
@@ -159,7 +158,6 @@ body {
     to { width: 100%; }
 }
 
-
 .expertise {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -276,7 +274,6 @@ button:hover {
     color: var(--primary);
 }
 
-
 #contact {
   padding: 3rem 1.5rem;
   background-color: #f9f9f9;
@@ -311,7 +308,6 @@ button:hover {
   border-radius: 16px;
 }
 
-
 .footer {
     text-align: center;
     padding: 3rem 1rem;
@@ -333,13 +329,6 @@ button:hover {
 }
 
 /* Make the header flexible for long month names */
-/* .fc-toolbar-title {
-  font-size: 1.5rem;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
-
 .fc-toolbar-title {
   font-size: 1.5rem;
   text-align: center;
@@ -347,7 +336,6 @@ button:hover {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 
 .fc-toolbar {
   display: flex;
@@ -365,23 +353,22 @@ button:hover {
   }
 
   .fc-toolbar-title {
-    font-size: 1.2rem;
+    font-size: 0.25rem;
     width: 100%;
     text-align: center;
   }
 
   .fc-button {
     padding: 0.25rem 0.5rem;
-    font-size: 0.875rem;
+    font-size: 0.475rem;
   }
 }
 
 @media (max-width: 480px) {
   .fc {
-    font-size: 0.85rem;
+    font-size: 0.65rem;
   }
 }
-
 
 .contact {
     display: flex;

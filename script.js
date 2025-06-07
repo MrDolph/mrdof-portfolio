@@ -187,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function toggleScrollButton() {
         const scrollPosition = window.scrollY + window.innerHeight;
-        const bottomThreshold = document.documentElement.scrollHeight - 400;
+        const bottomThreshold = document.documentElement.scrollHeight - 800;
         if (scrollPosition >= bottomThreshold) {
             scrollButton.parentElement.classList.add('show');
         } else {
