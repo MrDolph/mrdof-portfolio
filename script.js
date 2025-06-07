@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     // === Role Setup: Set this dynamically as needed ===
     // For now, true = admin (can edit), false = visitor (view only)
-    const isAdmin = true; // Change this to false to simulate visitor mode
+    const isAdmin = false; // Change this to false to simulate visitor mode
 
     // === Tab functionality with smooth scrolling ===
     const tabs = document.querySelectorAll('.main');
