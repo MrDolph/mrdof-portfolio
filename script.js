@@ -222,7 +222,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         var handler = PaystackPop.setup({
-            key: 'pk_test_c854323157ed47be1a606fcea3c7b9172151c835',
+            key: 'pk_live_44bc142c7b2b45c51e8fa9212295938ef79d2c94',
             email: email,
             amount: 500000, // kobo
             currency: "NGN",
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
         handler.openIframe();
     });
 
-    // === FullCalendar initialization with admin/visitor mode ===
+    // === FullCalendar initialisation with admin/visitor mode ===
     const calendarEl = document.getElementById('calendar');
     if (calendarEl) {
         const calendar = new FullCalendar.Calendar(calendarEl, {
