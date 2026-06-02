@@ -772,18 +772,7 @@ body {
 
 .fc .fc-event:hover { filter: brightness(1.15); }
 
-/* List view (mobile) */
-.fc .fc-list-event:hover td { background: rgba(255, 215, 0, 0.06); }
-.fc .fc-list-event-dot { border-color: var(--primary) !important; }
-.fc .fc-list-day-cushion { background: var(--card-bg); }
-.fc .fc-list-day-text, .fc .fc-list-day-side-text {
-    color: var(--text);
-    font-weight: 700;
-    font-size: 0.82rem;
-    text-decoration: none;
-}
-.fc .fc-list-event-title a { color: var(--text); text-decoration: none; font-size: 0.85rem; }
-.fc .fc-list-empty { padding: 2rem; text-align: center; color: var(--text); opacity: 0.5; }
+/* No list view — month only */
 
 /* ============================================
    FOOTER
