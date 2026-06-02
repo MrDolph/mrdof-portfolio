@@ -42,6 +42,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="./src/css/style.css">
     <link rel="stylesheet" href="./src/css/github.css">
+    <link rel="stylesheet" href="./src/css/hire.css">
     <title>Fatai Dawodu | Portfolio</title>
     <style>body { visibility: hidden; }</style>
 </head>
@@ -151,6 +152,41 @@
             </button>
         </div>
 
+        <!-- ===== HIRE ME (PAYSTACK) SECTION ===== -->
+        <section id="hire-section" class="hire-section">
+            <div class="section-heading">
+                <h2><i class="fas fa-handshake"></i> Hire Me</h2>
+                <p>Ready to work together? Choose a service below and pay securely via Paystack. I will reach out within 24 hours to get started.</p>
+            </div>
+            <div id="services-grid"></div>
+            <div id="payment-success"></div>
+        </section>
+
+        <!-- Payment modal -->
+        <div id="payment-overlay">
+            <div class="payment-modal">
+                <button id="payment-modal-close" aria-label="Close">        <!-- Footer -->times;</button>
+                <h3 id="payment-modal-title"></h3>
+                <p class="payment-modal-price" id="payment-modal-price"></p>
+                <label for="payment-name">Full Name</label>
+                <input type="text" id="payment-name" placeholder="Your full name">
+                <label for="payment-email">Email Address</label>
+                <input type="email" id="payment-email" placeholder="your@email.com">
+                <button id="payment-confirm-btn"><i class="fas fa-lock"></i> Pay Securely</button>
+            </div>
+        </div>
+
+        <!-- ===== BOOK A CALL (CALENDLY) SECTION ===== -->
+        <section id="calendar-section" class="calendar-section">
+            <div class="section-heading">
+                <h2><i class="fas fa-calendar-alt"></i> Book a Free Call</h2>
+                <p>Not sure which service fits? Book a free 15-minute discovery call and let's talk about your needs.</p>
+            </div>
+            <div class="calendly-wrap">
+                <div class="calendly-inline-widget" data-url="https://calendly.com/dawoduolalekanfatai" style="min-width:320px;height:660px;"></div>
+            </div>
+        </section>
+
         <!-- Footer -->
         <footer class="footer">
             <div class="contact">
@@ -168,6 +204,11 @@
         </footer>
     </div>
 
+    <!-- Paystack SDK -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <!-- FullCalendar -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
     <script type="module" src="./src/js/main.js"></script>
 </body>
 </html>

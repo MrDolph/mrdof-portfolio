@@ -1,0 +1,174 @@
+/* ===================================================
+   Hire Me (Paystack) + Calendar (FullCalendar) Sections
+   =================================================== */
+
+.hire-section,
+.calendar-section {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 3rem 2rem;
+  border-top: 0.5px solid rgba(128,128,128,0.15);
+}
+
+.section-heading {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.section-heading h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+}
+
+.section-heading h2 i {
+  margin-right: 8px;
+  color: var(--secondary);
+}
+
+.section-heading p {
+  font-size: 0.92rem;
+  color: var(--text);
+  opacity: 0.6;
+  max-width: 500px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* ---- Payment box ---- */
+.payment-box {
+  max-width: 480px;
+  margin: 0 auto;
+  background: var(--light);
+  border: 1px solid rgba(128,128,128,0.18);
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+}
+
+[data-theme="dark"] .payment-box {
+  border-color: rgba(255,255,255,0.1);
+}
+
+.payment-amount {
+  font-size: 3rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+[data-theme="dark"] .payment-amount {
+  color: var(--secondary);
+}
+
+.payment-desc {
+  font-size: 0.85rem;
+  color: var(--text);
+  opacity: 0.6;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+#userEmail {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(128,128,128,0.25);
+  border-radius: 8px;
+  background: var(--light);
+  color: var(--text);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+  text-align: center;
+}
+
+#userEmail:focus {
+  outline: none;
+  border-color: var(--secondary);
+}
+
+.pay-btn {
+  width: 100%;
+  padding: 0.85rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.pay-btn:hover {
+  background: var(--secondary);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+[data-theme="dark"] .pay-btn {
+  background: var(--secondary);
+  color: var(--primary);
+}
+
+[data-theme="dark"] .pay-btn:hover {
+  filter: brightness(1.1);
+}
+
+/* ---- FullCalendar wrapper ---- */
+#calendar {
+  background: var(--light);
+  border-radius: 12px;
+  padding: 1rem;
+  border: 1px solid rgba(128,128,128,0.15);
+}
+
+.fc {
+  font-family: inherit;
+}
+
+.fc .fc-toolbar-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.fc .fc-button {
+  background: var(--primary);
+  border-color: var(--primary);
+  font-size: 0.8rem;
+}
+
+.fc .fc-button:hover {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  color: var(--primary);
+}
+
+.fc .fc-daygrid-day-number,
+.fc .fc-col-header-cell-cushion {
+  color: var(--text);
+}
+
+.fc .fc-event {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .hire-section, .calendar-section { padding: 2rem 1rem; }
+  .payment-box { padding: 1.5rem; }
+  .payment-amount { font-size: 2.2rem; }
+}
