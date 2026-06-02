@@ -3,9 +3,7 @@
 // Falls back to REST starred repos if token unavailable
 
 var GITHUB_USERNAME = 'MrDolph';
-var GH_TOKEN = (typeof import.meta !== 'undefined' && import.meta.env)
-  ? import.meta.env.VITE_GITHUB_TOKEN
-  : '';
+var GH_TOKEN = import.meta.env.VITE_GITHUB_TOKEN || '';
 
 var LANG_COLORS = {
   JavaScript: '#f1e05a', TypeScript: '#3178c6', Python: '#3572A5',
