@@ -811,3 +811,181 @@ body {
     .header h1 { font-size: 1.3rem; }
     .fc { font-size: 0.72rem; }
 }
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+
+/* ---- Gradient mesh blobs (header bg) ---- */
+.mesh-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.mesh-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  animation: blob-drift ease-in-out infinite alternate;
+}
+
+.b1 {
+  width: 280px; height: 280px;
+  background: rgba(100, 108, 255, 0.35);
+  top: -80px; left: -60px;
+  animation-duration: 8s;
+  --tx: 40px; --ty: 30px;
+}
+
+.b2 {
+  width: 220px; height: 220px;
+  background: rgba(255, 215, 0, 0.2);
+  bottom: -60px; right: -40px;
+  animation-duration: 10s;
+  animation-delay: -3s;
+  --tx: -30px; --ty: -20px;
+}
+
+.b3 {
+  width: 180px; height: 180px;
+  background: rgba(233, 69, 96, 0.18);
+  top: 50%; left: 50%;
+  animation-duration: 12s;
+  animation-delay: -6s;
+  --tx: 50px; --ty: -40px;
+}
+
+@keyframes blob-drift {
+  from { transform: translate(0, 0) scale(1); }
+  to   { transform: translate(var(--tx), var(--ty)) scale(1.15); }
+}
+
+/* ---- Glitch text ---- */
+.glitch {
+  position: relative;
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  color: inherit;
+}
+
+.glitch::before {
+  color: #ff0055;
+  animation: glitch-before 6s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+}
+
+.glitch::after {
+  color: #00e5ff;
+  animation: glitch-after 6s infinite;
+  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+}
+
+@keyframes glitch-before {
+  0%, 85%, 100% { transform: translate(0); opacity: 0; }
+  87% { transform: translate(-3px, 1px); opacity: 1; }
+  89% { transform: translate(3px, -1px); opacity: 1; }
+  91% { transform: translate(0); opacity: 0; }
+}
+
+@keyframes glitch-after {
+  0%, 85%, 100% { transform: translate(0); opacity: 0; }
+  87% { transform: translate(3px, 1px); opacity: 1; }
+  89% { transform: translate(-3px, -1px); opacity: 1; }
+  91% { transform: translate(0); opacity: 0; }
+}
+
+/* ---- Tagline cursor for enhanced typewriter ---- */
+.tagline {
+  border-right: 2px solid var(--secondary);
+  animation: blink-tagline 0.75s step-end infinite;
+  padding-right: 2px;
+  min-height: 1.4em;
+  display: inline-block;
+}
+
+@keyframes blink-tagline {
+  from, to { border-color: transparent; }
+  50% { border-color: var(--secondary); }
+}
+
+/* ---- Scroll reveal ---- */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.55s ease, transform 0.55s ease;
+}
+
+.reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Skills stagger faster */
+.skill.reveal {
+  transform: translateY(14px) scale(0.95);
+}
+
+.skill.revealed {
+  transform: translateY(0) scale(1);
+}
+
+/* ---- 3D tilt — preserve transform origin ---- */
+.project-card,
+.gh-card {
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* ---- Magnetic button — smooth spring back ---- */
+.pay-btn,
+.gh-view-all a,
+.main,
+.yt-channel-link {
+  will-change: transform;
+}
+
+/* ---- Staggered card entrance via animation ---- */
+.project-card { animation: card-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both; }
+.project-card:nth-child(1) { animation-delay: 0ms; }
+.project-card:nth-child(2) { animation-delay: 80ms; }
+.project-card:nth-child(3) { animation-delay: 160ms; }
+.project-card:nth-child(4) { animation-delay: 240ms; }
+.project-card:nth-child(5) { animation-delay: 320ms; }
+.project-card:nth-child(6) { animation-delay: 400ms; }
+
+@keyframes card-pop {
+  from { opacity: 0; transform: translateY(20px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ---- Skill badge bounce in ---- */
+.skill {
+  animation: badge-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes badge-in {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ---- Header content above canvas/mesh ---- */
+.header-inner { position: relative; z-index: 1; }
+.theme-toggle { z-index: 2; }
+
+/* ---- Reduce motion for accessibility ---- */
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal.revealed { opacity: 1; transform: none; transition: none; }
+  .glitch::before, .glitch::after { display: none; }
+  .mesh-blob { animation: none; }
+  .tagline { border-right: none; animation: none; }
+  .project-card, .skill { animation: none; }
+}
