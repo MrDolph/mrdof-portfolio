@@ -3,7 +3,7 @@ import viteCompression from 'vite-plugin-compression';
 import { createHtmlPlugin } from 'vite-plugin-html';
 
 export default defineConfig({
-  base: './',
+  base: '/mrdof-portfolio/',
   plugins: [
     createHtmlPlugin({
       minify: true,
