@@ -793,7 +793,7 @@ body {
     .main { padding: 0.55rem 1.4rem; font-size: 0.85rem; }
     .featured-section, .github-section, .youtube-section, .calendar-section { padding: 2rem 1rem; }
     .featured-grid, .gh-subgrid, .youtube-grid { grid-template-columns: 1fr; }
-    .hire-section { padding: 2.5rem 1rem; }
+    .hire-section { padding: 2rem 1rem; }
     .payment-box { padding: 1.5rem 1.25rem; }
     .payment-amount { font-size: 2.8rem; }
     .modal-content { flex-direction: column; margin: 0.5rem; }
@@ -801,6 +801,9 @@ body {
     .contact { gap: 1rem; }
     .fc .fc-toolbar-title { font-size: 0.9rem; }
     .fc .fc-button { padding: 0.3rem 0.6rem; font-size: 0.72rem; }
+    /* kill any ghost height from inactive tab */
+    .content { height: 0; overflow: hidden; }
+    .content.active { height: auto; overflow: visible; }
 }
 
 @media (max-width: 480px) {
