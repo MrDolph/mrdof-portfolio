@@ -1,5 +1,3 @@
-// app.js
-
 import { initTab } from './tab.js';
 import { initTheme } from './theme.js';
 import { initModal } from './modal.js';
@@ -10,10 +8,7 @@ import { initPaystack, initCalendar } from './paystack.js';
 
 export function initApp() {
   var app = document.getElementById('root');
-  if (!app) {
-    console.error("Root element with ID 'root' not found.");
-    return;
-  }
+  if (!app) return;
 
   initTab();
   initTheme();
