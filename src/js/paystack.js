@@ -47,14 +47,28 @@ export function initCalendar() {
     return;
   }
 
+  var isMobile = window.innerWidth < 768;
+
   var calendar = new FullCalendar.Calendar(calendarEl, {
-    initialView: 'dayGridMonth',
+    initialView: isMobile ? 'listMonth' : 'dayGridMonth',
     selectable: isAdmin,
     editable: isAdmin,
-    headerToolbar: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'dayGridMonth,timeGridWeek'
+    height: 'auto',
+    expandRows: true,
+    handleWindowResize: true,
+    windowResizeDelay: 100,
+    headerToolbar: isMobile
+      ? { left: 'prev,next', center: 'title', right: 'today' }
+      : { left: 'prev,next today', center: 'title', right: 'dayGridMonth,listMonth' },
+    views: {
+      listMonth: {
+        buttonText: 'List',
+        noEventsContent: 'No upcoming events'
+      },
+      dayGridMonth: {
+        buttonText: 'Month',
+        dayMaxEvents: 2
+      }
     },
     select: isAdmin ? function (info) {
       var title = prompt('Enter Event Title:');
