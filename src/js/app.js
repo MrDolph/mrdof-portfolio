@@ -42,5 +42,14 @@ export function initApp() {
   // Scroll reveal after a tick so DOM is ready
   setTimeout(initScrollReveal, 50);
 
+  // Auto-count certificates and badges
+  var certCards = document.querySelectorAll('.cert-card[data-type]');
+  var countEl = document.getElementById('certs-count');
+  if (countEl && certCards.length > 0) {
+    countEl.textContent = certCards.length + ' credential' + (certCards.length !== 1 ? 's' : '');
+    var empty = document.querySelector('.cert-empty');
+    if (empty) empty.style.display = 'none';
+  }
+
   document.body.style.visibility = 'visible';
 }
