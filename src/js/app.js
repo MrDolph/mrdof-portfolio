@@ -13,7 +13,8 @@ import {
   init3DTilt,
   initMagneticButtons,
   initGlitchText,
-  initEnhancedTypewriter
+  initEnhancedTypewriter,
+  initCertProtection
 } from './animations.js';
 
 export function initApp() {
@@ -41,6 +42,8 @@ export function initApp() {
 
   // Scroll reveal after a tick so DOM is ready
   setTimeout(initScrollReveal, 50);
+
+  initCertProtection();
 
   // Auto-count certificates and badges
   var certCards = document.querySelectorAll('.cert-card[data-type]');

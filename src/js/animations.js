@@ -283,3 +283,61 @@ export function initEnhancedTypewriter() {
 
   setTimeout(type, 1200);
 }
+
+// ============================================
+// CERTIFICATE PROTECTION
+// ============================================
+export function initCertProtection() {
+  var section = document.querySelector('.certs-section');
+  if (!section) return;
+
+  // 1. Block right-click on cert images
+  section.addEventListener('contextmenu', function(e) {
+    if (e.target.closest('.cert-card')) {
+      e.preventDefault();
+      return false;
+    }
+  });
+
+  // 2. Block drag on cert images
+  section.querySelectorAll('img').forEach(function(img) {
+    img.addEventListener('dragstart', function(e) { e.preventDefault(); });
+    img.setAttribute('draggable', 'false');
+    img.style.userSelect = 'none';
+    img.style.webkitUserSelect = 'none';
+    img.style.pointerEvents = 'none'; // disables right-click AND drag on image itself
+  });
+
+  // 3. Block keyboard shortcuts (PrintScreen handled via overlay)
+  document.addEventListener('keydown', function(e) {
+    var inCerts = document.querySelector('.certs-section:hover');
+    if (!inCerts) return;
+    // Block Ctrl+S, Ctrl+U, Ctrl+Shift+I, F12
+    if (
+      (e.ctrlKey && (e.key === 's' || e.key === 'u' || e.key === 'p')) ||
+      (e.ctrlKey && e.shiftKey && (e.key === 'i' || e.key === 'j' || e.key === 'c')) ||
+      e.key === 'F12'
+    ) {
+      e.preventDefault();
+    }
+  });
+
+  // 4. Transparent overlay on each cert thumb — sits above image, blocks pointer
+  section.querySelectorAll('.cert-thumb').forEach(function(thumb) {
+    var shield = document.createElement('div');
+    shield.className = 'cert-shield';
+    thumb.appendChild(shield);
+  });
+
+  // 5. Watermark each cert card with your name
+  section.querySelectorAll('.cert-card').forEach(function(card) {
+    var wm = document.createElement('div');
+    wm.className = 'cert-watermark';
+    wm.textContent = 'Fatai Dawodu · mrdof-portfolio.vercel.app';
+    card.appendChild(wm);
+  });
+
+  // 6. Disable text/image selection on the whole section
+  section.style.userSelect = 'none';
+  section.style.webkitUserSelect = 'none';
+}

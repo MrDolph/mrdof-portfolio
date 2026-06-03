@@ -1327,3 +1327,52 @@ body {
     .certs-grid { grid-template-columns: 1fr; }
     .cert-thumb { height: 140px; }
 }
+
+/* ---- Certificate protection ---- */
+
+/* Transparent shield sits above the image blocking pointer events */
+.cert-shield {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background: transparent;
+    cursor: default;
+}
+
+/* Diagonal watermark on each card */
+.cert-watermark {
+    position: absolute;
+    bottom: 44px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.58rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.04em;
+    transform: rotate(-2deg);
+    pointer-events: none;
+    z-index: 3;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Disable image dragging globally on cert section */
+.certs-section img {
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
+    pointer-events: none;
+}
+
+/* Keep verify button clickable above shield */
+.cert-overlay {
+    z-index: 4;
+}
+
+.cert-verify-btn {
+    pointer-events: auto;
+    position: relative;
+    z-index: 5;
+}
