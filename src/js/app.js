@@ -1,3 +1,4 @@
+import { initCredentials, initTestimonials, initExperience, initResearch, initBlogList } from './sanity.js';
 import { initTab } from './tab.js';
 import { initTheme } from './theme.js';
 import { initModal } from './modal.js';
@@ -40,6 +41,12 @@ export function initApp() {
   initPaystack();
   initCalendar();
 
+  // Sanity CMS content
+  initCredentials();
+  initTestimonials();
+  initExperience();
+  initResearch();
+  initBlogList();
   // Scroll reveal after a tick so DOM is ready
   setTimeout(initScrollReveal, 50);
 
