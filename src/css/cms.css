@@ -736,15 +736,49 @@
 }
 
 @media (max-width: 768px) {
-    .cms-section { padding: 2rem 0 1rem; }
+    /* ── Give ALL CMS content breathing room from phone edges ── */
+    .cms-section { padding: 2rem 1rem 1rem; }
+    .cms-section-header { margin-bottom: 1.5rem; }
+
+    .credentials-strip { padding: 0.75rem 1rem 2rem; }
+
     .testimonials-grid { grid-template-columns: 1fr; }
+    .testi-card { padding: 1.25rem; }
+
     .research-grid { grid-template-columns: 1fr; }
-    .blog-grid { grid-template-columns: 1fr; }
+    .research-card { padding: 1.25rem; }
+
+    .blog-section-wrap { padding: 1.5rem 1rem 2rem; }
+    .blog-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .blog-card-body { padding: 1rem; }
+    .blog-card-featured { flex-direction: column; grid-column: span 1; }
+    .blog-card-featured .blog-thumb-wrap { width: 100%; height: 190px; }
+    .blog-card-featured .blog-card-body { padding: 1rem; }
+
+    .blog-reader-inner { padding: 1.25rem 1rem 2rem; }
+    .reader-back { margin-bottom: 1.25rem; }
+    .reader-title { font-size: 1.35rem; }
+    .reader-body { font-size: 0.92rem; }
+    .reader-cover { border-radius: 10px; max-height: 240px; }
+
     .experience-timeline { padding-left: 1.5rem; }
+    .exp-content { padding: 1rem 1.1rem; }
     .exp-header { flex-direction: column; gap: 0.4rem; }
     .exp-meta { align-items: flex-start; flex-direction: row; gap: 0.5rem; }
-    .reader-title { font-size: 1.4rem; }
-    .blog-reader-inner { padding: 1.5rem 0 2rem; }
+
     .credential-pill { font-size: 0.74rem; }
     .cms-section-title { font-size: 1rem; }
+}
+
+@media (max-width: 480px) {
+    .cms-section { padding: 1.5rem 0.875rem 0.75rem; }
+    .blog-section-wrap { padding: 1.25rem 0.875rem 1.5rem; }
+    .blog-reader-inner { padding: 1rem 0.875rem 1.5rem; }
+    .credentials-strip { padding: 0.5rem 0.875rem 1.5rem; }
+    .testi-card { padding: 1rem; }
+    .research-card { padding: 1rem; }
+    .exp-content { padding: 0.875rem 1rem; }
+    .blog-thumb-wrap { height: 170px; }
+    .reader-title { font-size: 1.2rem; }
+    .blog-empty { padding: 3rem 0.875rem; }
 }
