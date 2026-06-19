@@ -378,11 +378,23 @@
 
             <!-- BLOG SECTION -->
             <section class="content" id="sectionBlog">
-                <div class="cms-section">
-                    <div class="cms-section-header">
+                <div class="blog-section-wrap">
+
+                    <!-- Header -->
+                    <div class="cms-section-header" id="blog-section-header">
                         <h2 class="cms-section-title">✍️ Blog</h2>
+                        <span class="gh-status-pill">
+                            <span class="gh-status-dot"></span>
+                            Physics · EdTech · Dev · Career
+                        </span>
                     </div>
+
+                    <!-- Card grid — populated by sanity.js -->
                     <div id="blog-grid" class="blog-grid"></div>
+
+                    <!-- Post reader — shown when a card is clicked -->
+                    <div id="blog-reader"></div>
+
                 </div>
             </section>
         </div><!-- end .wrap -->
