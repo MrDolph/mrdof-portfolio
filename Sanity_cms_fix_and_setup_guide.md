@@ -112,6 +112,41 @@ This aligns `sanity` with the `@sanity/vision` version you already had pinned, a
 
 Regenerated automatically by `npm install` after the `package.json` change. You don't need a file from me for this — just run `npm install` in your `studio/` folder and it'll rebuild correctly (it's a ~700KB file, not practical to paste/attach).
 
+### 3.4 `studio/sanity.cli.js`
+
+**Before:**
+```js
+import {defineCliConfig} from 'sanity/cli'
+
+export default defineCliConfig({
+  api: {
+    projectId: 'gdn0wpko',
+    dataset: 'production'
+  },
+  deployment: {
+    autoUpdates: false,
+  }
+})
+```
+
+**After:**
+```js
+import {defineCliConfig} from 'sanity/cli'
+
+export default defineCliConfig({
+  api: {
+    projectId: 'gdn0wpko',
+    dataset: 'production'
+  },
+  studioHost: 'mrdof-portfolio',
+  deployment: {
+    autoUpdates: false,
+  }
+})
+```
+
+Added `studioHost: 'mrdof-portfolio'` after a hostname typo (`mrdof-porfolio.sanity.studio`, missing the "t") got deployed during an earlier `sanity deploy` run where the hostname was typed interactively. Locking it into config means `sanity deploy` never prompts for — and therefore can never typo — the hostname again. See section 11 for the recovery steps used to fix the live typo'd deployment.
+
 ---
 
 ## 4. Local Development Setup
@@ -146,10 +181,47 @@ There is no `sanity studio` command — that was a typo/mix-up; `sanity dev` is 
 ```bash
 cd my-portfolio
 npm install
-npm run dev               # Vite dev server, default http://localhost:5173
+npm run dev               # Vite dev server — runs at http://localhost:3000 (pinned in vite.config.js, not Vite's 5173 default)
 ```
 
-Your `my-portfolio/.env` already has `VITE_SANITY_PROJECT_ID=gdn0wpko`. Just make sure `http://localhost:5173` (or whatever port Vite picks) is added as a CORS origin — see section 5 — or the local dev site won't be able to pull CMS content either.
+Your `my-portfolio/.env` already has `VITE_SANITY_PROJECT_ID=gdn0wpko`. Just make sure `http://localhost:3000` is added as a CORS origin — see section 5 — or the local dev site won't be able to pull CMS content either.
+
+### 4.3 Stale/broken Vite install (`node_modules` out of sync with `package.json`)
+
+**Symptom:** browser console shows `Uncaught TypeError: Cannot read properties of undefined (reading 'VITE_SANITY_PROJECT_ID')` at `sanity.js:5`, and the `npm run dev` terminal output prints something like:
+```
+vite v0.10.3
+Dev server running at:
+  > http://172.25.160.1:3000
+  > http://169.254.81.72:3000
+  ...
+  > http://localhost:3000
+```
+**What this actually means:** `import.meta.env` is a feature Vite injects at dev-server/build time — it doesn't exist natively in the browser. If it's `undefined`, the file isn't being processed by Vite's dev pipeline at all. The giveaway is the version number and banner style: `vite v0.10.3` is a pre-1.0 release from years before `import.meta.env` or the `server.port`/`server.open` options in this project's `vite.config.js` even existed — printing every network interface on the machine instead of a single clean `Local:` line is also classic old-Vite behavior. This means `node_modules` had gotten badly out of sync with `package.json` (which correctly declares `"vite": "^8.0.16"`), not anything wrong with the Sanity/CORS setup.
+
+**Fix — clean reinstall:**
+```powershell
+cd my-portfolio
+Remove-Item -Recurse -Force node_modules
+Remove-Item package-lock.json
+npm install
+npm run dev
+```
+After this, the terminal should print a single clean line like `➜  Local:   http://localhost:3000/` and the `vite v8.x.x` version banner — confirming the real, current Vite is now running.
+
+### 4.4 Static assets — the `public/` folder rule
+
+Vite has a special rule: anything placed inside `public/` is served at the site **root**, and the `public/` part of the path is never included in the URL you reference it by. On disk: `my-portfolio/public/mrdof-logo.svg`. In code: `/mrdof-logo.svg` — never `public/mrdof-logo.svg` or `/public/mrdof-logo.svg`.
+
+`index.html` originally had:
+```html
+<link rel="icon" type="image/svg+xml" href="public/mrdof-logo.svg" />
+```
+which triggers a Vite dev warning. The fix is **only** the reference, not the file location:
+```html
+<link rel="icon" type="image/svg+xml" href="/mrdof-logo.svg" />
+```
+Important: the file itself must stay inside `public/`. Files placed loose in the project root (outside `public/`) are not automatically copied into `dist/` during `vite build` — they might still happen to load in local dev by coincidence, but they will 404 on the live Vercel build. `public/` is the only place static assets like favicons/logos are guaranteed to survive the production build untouched.
 
 ---
 
@@ -161,7 +233,7 @@ This is the step that fixes "connect to the CMS on web." Run from inside `studio
 npx sanity login                                              # one-time auth as project owner
 npx sanity cors list                                          # see current whitelist (likely empty/stale)
 npx sanity cors add https://mrdof-portfolio.vercel.app        # production frontend
-npx sanity cors add http://localhost:5173                     # local Vite dev
+npx sanity cors add http://localhost:3000                     # local Vite dev — vite.config.js pins port to 3000, NOT Vite's 5173 default
 ```
 
 Add `--credentials` to any of those only if you start sending an auth token from the frontend (e.g. to preview drafts). For plain public reads (what `sanity.js` currently does), it's not needed.
@@ -180,6 +252,13 @@ npx sanity deploy
 ```
 
 First time you run this you'll be asked to choose/confirm a studio hostname (e.g. `mrdof-portfolio.sanity.studio`). This command builds *and* pushes — it'll fail the same way `sanity build` did if the fix isn't in place, so if you ever see this fail again, check `sanity.config.js` imports first.
+
+**Correcting a typo'd hostname after deployment.** `sanity deploy` doesn't let you rename a hostname in place — you have to undeploy the wrong one first, then deploy fresh to the correct one. `sanity undeploy` reads whichever hostname is currently set as `studioHost` in `sanity.cli.js`, so to remove a wrong deployment you have to point that field at the wrong name *temporarily*, undeploy, then switch it back:
+
+1. Set `studioHost` in `sanity.cli.js` to the wrong/typo'd name → `npx sanity undeploy` (removes it)
+2. Set `studioHost` back to the correct name (`mrdof-portfolio`, already the case in the current file — see section 3.4) → `npx sanity deploy` (deploys fresh, no prompt since it's locked in config)
+
+If `npx sanity undeploy` ever responds with *"Your project has not been assigned a studio hostname or the `studioHost` provided does not exist. Nothing to undeploy"* — that means `sanity.cli.js` is currently pointed at a name that was never deployed (often because it's already been switched to the correct one). Repoint it at whichever hostname is actually live, then undeploy again.
 
 ### 6.2 Deploy the portfolio frontend
 
@@ -201,6 +280,9 @@ git push origin main
 - [ ] `npx sanity cors list` shows your production domain and localhost
 - [ ] Opening the deployed portfolio site, browser console shows no CORS/network errors from `sanity.js`
 - [ ] Testimonials/blog/experience/research/credentials sections populate with real CMS content (or gracefully show "no content yet" if datasets are empty — not an error)
+- [ ] `npm run dev` in `my-portfolio` prints a single clean `Local:` line with `vite v8.x.x` (not multiple network IPs or an old version number)
+- [ ] Deployed Studio URL is `mrdof-portfolio.sanity.studio` (not the typo'd `mrdof-porfolio`)
+- [ ] Favicon (`/mrdof-logo.svg`) loads correctly on both local dev and the live Vercel site
 
 If you share the live Studio URL once you've deployed, I can check it loads correctly from my end too.
 
@@ -235,9 +317,13 @@ Both already match — no changes needed here. Project IDs are not secret and ar
 | Studio `dist/` missing `index.html` | Build crashed partway (see above) | Re-run `sanity build` after fixing config; check terminal output for the real error |
 | Browser console shows CORS/network errors when loading portfolio | Origin not whitelisted | `npx sanity cors add <your-origin>` |
 | `groqFetch` resolves to empty arrays everywhere, no console errors | CORS is fine, but dataset has no published documents of that type | Add/publish content in the Studio |
-| Local dev (`localhost:5173`) can't fetch CMS data but production can | Localhost origin not in CORS whitelist | `npx sanity cors add http://localhost:5173` |
+| Local dev (`localhost:3000`) can't fetch CMS data but production can | Localhost origin not in CORS whitelist (note: this project's Vite dev server is pinned to port 3000, not the 5173 default) | `npx sanity cors add http://localhost:3000` |
+| Page looks correct up top but everything below a certain point (Certificates, Hire Me, Calendar, Footer) is blank | Scroll-reveal animation (`checkReveal` in `animations.js`) only fires on real browser `scroll` events plus one check 100ms after load — it doesn't account for content below the initial viewport on page-load alone | Scroll down manually in the live browser tab to confirm content appears; this is expected behavior, not a bug, unless content still doesn't appear after manual scrolling |
 | `npx sanity dev`/`deploy` fails with an auth/"project not found" error after an org change | Project may have been moved or deleted along with an org | `npx sanity projects list` to confirm the project still exists; if missing, see section 7 and contact Sanity support ASAP |
 | Studio/portfolio briefly stop connecting right after an org/account change, but a reload fixes it | Stale CORS preflight or auth session cache | Hard reload / clear browser cache for the affected domain before assuming data loss |
+| `npx sanity undeploy` says "studioHost provided does not exist. Nothing to undeploy" | `sanity.cli.js`'s `studioHost` is pointed at a name that isn't actually the live one (often because it was already corrected) | Temporarily set `studioHost` to whichever hostname is actually deployed, undeploy, then set it back |
+| Browser console: `Uncaught TypeError: Cannot read properties of undefined (reading 'VITE_SANITY_PROJECT_ID')`, terminal shows `vite v0.x.x` and prints multiple network IPs instead of one `Local:` line | `node_modules` badly out of sync with `package.json` — an ancient pre-1.0 Vite is actually running, not the `^8.0.16` declared | Clean reinstall: delete `node_modules` and `package-lock.json`, `npm install`, restart `npm run dev` |
+| Vite dev warning: "Files in the public directory are served at the root path. Instead of `/public/x`, use `/x`" | Asset reference includes the `public/` prefix in the path | Fix the reference only (drop `public/` from the `href`/`src`) — do NOT move the file out of `public/`, or it won't be included in the production build |
 
 ---
 
@@ -254,3 +340,17 @@ In this case, a simple reload resolved it — almost certainly a stale CORS pref
 ### Local dev workflow clarification
 
 `npx sanity login` is a one-time step (stores an auth token locally) — not something run every session. Day-to-day local work is just `npx sanity dev` (or `npm run dev`). There is no `sanity studio` command.
+
+### 2026-06-20 (cont.) — Studio hostname typo'd during deploy
+
+A `sanity deploy` run had the hostname typed interactively as `mrdof-porfolio` (missing the "t") instead of `mrdof-portfolio`, so the live Studio briefly sat at the wrong `.sanity.studio` address. Fixed by temporarily pointing `studioHost` in `sanity.cli.js` at the typo'd name, running `npx sanity undeploy` to remove it, then switching `studioHost` back to `mrdof-portfolio` and running `npx sanity deploy` fresh. `studioHost` is now permanently locked into `sanity.cli.js` (see section 3.4) so the hostname is never prompted for — and can't be mistyped — again.
+
+### 2026-06-20 (cont.) — Local CORS fix appeared not to work; actual cause was a broken Vite install
+
+After correctly adding `http://localhost:3000` to the CORS allow-list, local dev still failed — but with a completely different error than CORS (`Cannot read properties of undefined (reading 'VITE_SANITY_PROJECT_ID')`). Traced to `node_modules` in `my-portfolio` being badly out of sync with `package.json`: the terminal showed `vite v0.10.3` actually running, a pre-1.0 release with no `import.meta.env` support, despite `package.json` declaring `^8.0.16`. None of the CORS/Sanity work was at fault. Fixed with a clean reinstall (`Remove-Item -Recurse -Force node_modules`, `Remove-Item package-lock.json`, `npm install`). See section 4.3.
+
+**Lesson:** when local dev breaks right after working on something unrelated (CORS, deploy, etc.), check the dev server's own startup banner for anomalies before assuming the most recent change is the cause — version/environment drift in `node_modules` is invisible until something like this surfaces it.
+
+### 2026-06-20 (cont.) — Favicon moved out of `public/` by mistake
+
+A Vite warning ("Files in the public directory are served at the root path... use `/mrdof-logo.svg`") was initially misread as an instruction to move the file out of `public/`. The warning is actually about the *reference path* in `index.html`, not the file's location. Corrected: file stays in `public/mrdof-logo.svg`; the `href` in `index.html` changed from `"public/mrdof-logo.svg"` to `"/mrdof-logo.svg"`. See section 4.4 for why moving the file itself would have broken the Vercel production build.
