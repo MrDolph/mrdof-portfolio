@@ -283,6 +283,8 @@ git push origin main
 - [ ] `npm run dev` in `my-portfolio` prints a single clean `Local:` line with `vite v8.x.x` (not multiple network IPs or an old version number)
 - [ ] Deployed Studio URL is `mrdof-portfolio.sanity.studio` (not the typo'd `mrdof-porfolio`)
 - [ ] Favicon (`/mrdof-logo.svg`) loads correctly on both local dev and the live Vercel site
+- [ ] Certificates/Projects/GitHub/YouTube/Testimonials/Experience/Research sections cap their height and become scrollable once they have enough items to overflow (test by temporarily adding extra dummy items if needed); nav arrows and fade hints appear on desktop, disappear on mobile
+- [ ] Footer sits flush against the bottom of the viewport on every tab (About Me, Portfolio, Blog), even when a tab's content is short — not just on Blog
 
 If you share the live Studio URL once you've deployed, I can check it loads correctly from my end too.
 
@@ -354,3 +356,138 @@ After correctly adding `http://localhost:3000` to the CORS allow-list, local dev
 ### 2026-06-20 (cont.) — Favicon moved out of `public/` by mistake
 
 A Vite warning ("Files in the public directory are served at the root path... use `/mrdof-logo.svg`") was initially misread as an instruction to move the file out of `public/`. The warning is actually about the *reference path* in `index.html`, not the file's location. Corrected: file stays in `public/mrdof-logo.svg`; the `href` in `index.html` changed from `"public/mrdof-logo.svg"` to `"/mrdof-logo.svg"`. See section 4.4 for why moving the file itself would have broken the Vercel production build.
+
+---
+
+## 12. Feature: Scroll Panels (bounded-height growing sections)
+
+### 12.1 Why
+
+Several sections accumulate content indefinitely over time — certificates, featured projects, GitHub repos, YouTube videos, testimonials, experience entries, research papers. Left as plain CSS grids, each new item just makes the page taller, which on the About Me and Portfolio tabs means multiple growing sections stacking on top of each other and cramping the page, especially on mobile.
+
+### 12.2 What changed
+
+A reusable `.scroll-panel` component was added: it wraps an existing grid/list element without altering the element itself (same ID, same class, same content). While a section has few items it looks and behaves exactly as before — no visible cap, no scrollbar. Once content height exceeds a max-height threshold, that section becomes its own contained, vertically scrollable box instead of pushing the rest of the page down.
+
+**Visual behavior once a section overflows:**
+- Thin scrollbar styled in the site's gold accent (`var(--secondary)`)
+- Soft fade gradient at the top and/or bottom edge — only visible when there's actually more content in that direction (not shown if you're already at the top/bottom, or if the section doesn't overflow at all)
+- Small circular up/down arrow buttons (desktop only) for click-to-scroll, same visibility logic as the fades
+- Smooth scroll behavior, respecting `prefers-reduced-motion`
+
+**Mobile (≤768px):**
+- Max-height shrinks to 420px (480px for the larger image-card sections), so panels don't dominate a small screen
+- The click arrows are hidden — touch scrolling is the natural gesture there, so they'd just be clutter
+- Fade hints stay, as a visual cue there's more to swipe through
+
+**Async content handling:** several of these sections (Testimonials, Experience, Research, GitHub Projects) populate after page load via API calls. The scroll behavior uses a `MutationObserver` on each panel's content, so it correctly activates/updates whenever that content actually arrives — not dependent on guessing a fixed delay.
+
+### 12.3 Files changed
+
+**`src/css/main.css`** — new component block appended at the end of the file (`SCROLL PANELS` section): `.scroll-panel`, `.scroll-panel-viewport`, `.scroll-panel--lg` (the 680px preset for image-heavy cards), `.scroll-fade` / `.scroll-fade-top` / `.scroll-fade-bottom`, `.scroll-nav` / `.scroll-nav-up` / `.scroll-nav-down`, plus the `prefers-reduced-motion` and `max-width: 768px` overrides. Nothing existing in the file was modified, only appended to.
+
+**`src/js/scrollPanels.js`** (new file) — exports `initScrollPanels()`. Finds every `.scroll-panel` on the page, wires up its nav buttons, and uses a `MutationObserver` + scroll/resize listeners to toggle the `is-scrolled` / `has-more-below` classes that drive fade and button visibility.
+
+**`src/js/app.js`** — added `import { initScrollPanels } from './scrollPanels.js'` and a single `initScrollPanels();` call inside `initApp()`, alongside the other init calls.
+
+**`index.html`** — seven sections had their existing grid element wrapped in the new markup pattern (existing `id`/`class` on the grid itself untouched, just wrapped):
+```html
+<div class="scroll-panel">   <!-- or "scroll-panel scroll-panel--lg" for image-heavy ones -->
+  <div class="scroll-fade scroll-fade-top" aria-hidden="true"></div>
+  <button class="scroll-nav scroll-nav-up" type="button" aria-label="Scroll up"><i class="fas fa-chevron-up"></i></button>
+  <div class="[original-class] scroll-panel-viewport" id="[original-id]">
+    <!-- original content, completely unchanged -->
+  </div>
+  <button class="scroll-nav scroll-nav-down" type="button" aria-label="Scroll down"><i class="fas fa-chevron-down"></i></button>
+  <div class="scroll-fade scroll-fade-bottom" aria-hidden="true"></div>
+</div>
+```
+Also fixed the favicon `href` while in this file (see section 4.4 / incident log — file stays in `public/`, reference changed from `"public/mrdof-logo.svg"` to `"/mrdof-logo.svg"`).
+
+### 12.4 Settings — which sections got which preset
+
+| Section | Element | Preset | Why |
+|---|---|---|---|
+| Featured Projects | `.featured-grid` | `scroll-panel--lg` (680px) | Tall image-led cards |
+| GitHub Projects | `#gh-projects-grid` | default (560px) | Medium-density cards |
+| YouTube Videos | `#youtube-grid` | default (560px) | Medium thumbnail cards |
+| Certificates & Badges | `#certs-grid` | `scroll-panel--lg` (680px) | Tall image-led cards |
+| Testimonials | `#testimonials-grid` | default (560px) | Medium-density cards |
+| Experience | `#experience-timeline` | default (560px) | Compact list, shows ~3-4 entries |
+| Research | `#research-grid` | default (560px) | Medium-density cards |
+
+**Deliberately left unbounded:**
+- **Blog grid** (`#blog-grid`) — sits alone on its own dedicated tab rather than stacked against other sections, so it isn't competing for page space the way About Me / Portfolio tab content is.
+- **Credentials strip** (`#credentials-strip`) — small pills that already wrap gracefully onto new lines; capping that one would create an oddly tiny scrollbox for lightweight content.
+
+Both can be added to the pattern later if that changes — just wrap them the same way.
+
+### 12.5 Side note: unused CSS files
+
+While working in `src/css/`, noticed `github.css`, `hire.css`, and `style.css` aren't referenced anywhere — `index.html` only links `main.css` and `cms.css`. `main.css` already has its own complete (and more current) versions of everything those three files contain, so they're dead leftovers from before the CSS got consolidated, not a missing dependency. Safe to delete; not done automatically since deleting files wasn't asked for.
+
+---
+
+## 13. Incident Log (cont.)
+
+### 2026-06-20 (cont.) — Added bounded-height scroll panels to growing sections
+
+Certificates, Featured Projects, GitHub Projects, YouTube Videos, Testimonials, Experience, and Research were all uncapped grids that would make the page progressively longer/more cramped as content is added over time (mobile especially). Added a reusable `.scroll-panel` wrapper component (CSS in `main.css`, behavior in new `src/js/scrollPanels.js`) that caps each section's height once it overflows, with a styled scrollbar, edge fade hints, and click-to-scroll buttons on desktop. See section 12 for full details. Verified with `npx vite build` — compiles clean, no structural HTML issues (checked with a tag-balance parse across the whole file).
+
+---
+
+## 14. Bug Fix: Footer not pinned to viewport bottom on short tabs
+
+### 14.1 Symptom
+
+Footer only appeared "stuck" to the bottom of the screen on the Blog tab. On About Me and Portfolio, when their content was short, the footer ended up floating partway up the page with empty background visible beneath it instead of sitting flush against the bottom edge.
+
+### 14.2 Why this happened
+
+Two separate things combined to cause it:
+
+1. **No sticky-footer layout existed at all.** `#root` had zero CSS rules, and `.footer` was a plain block element with `margin-top: 2rem`. Nothing tied the page to at least the viewport's height — the footer just sat wherever the content above it happened to end.
+
+2. **Page height varies by active tab, by design.** The tab-switching CSS (`.content` / `.content.active`) uses `position: absolute` for inactive tabs and `position: relative` for the active one, so `.wrap`'s rendered height is only ever the *active* tab's content height — the other two tabs contribute nothing to page height while hidden. So whichever tab is shortest makes the whole page shortest in that moment.
+
+Put together: Blog only ever "looked right" by coincidence, because its content (or even its empty "no posts yet" state) happened to push total page height past the viewport, landing the footer at the genuine end of a tall page. It was never actually pinned to anything — there was no mechanism that would have made it behave consistently across tabs.
+
+### 14.3 The fix
+
+Standard flexbox sticky-footer pattern, three small edits in `src/css/main.css`:
+
+```css
+/* before */
+html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+body { font-family: 'Inter', sans-serif; /* ...existing properties... */ }
+
+/* after */
+html { scroll-behavior: smooth; scroll-padding-top: 80px; height: 100%; }
+body { font-family: 'Inter', sans-serif; /* ...existing properties... */ min-height: 100%; }
+
+/* new rule, didn't exist before */
+#root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+```
+
+And the existing `.footer` rule:
+```css
+/* before */
+.footer { background: var(--primary); color: #fff; text-align: center; padding: 2.5rem 1rem; margin-top: 2rem; }
+
+/* after */
+.footer { background: var(--primary); color: #fff; text-align: center; padding: 2.5rem 1rem; margin-top: auto; }
+```
+
+**Why `margin-top: auto` is the actual fix:** inside a flex column, a child with `margin-top: auto` absorbs all the leftover space above itself and gets pushed to the very end of the container. On a short tab, that leftover space exists (because `#root` is guaranteed at least `100vh` tall), so the footer's margin expands to fill it, pinning the footer to the viewport bottom. On a tall tab (lots of blog posts, lots of CMS content once populated), there's no leftover space to absorb, so the footer just flows naturally after the content — identical to how it already behaved before this fix. This is why Blog's appearance doesn't change at all; only the previously-broken short-tab cases do.
+
+**Checked for regressions:** changing `margin-top` from a fixed `2rem` to `auto` could in theory remove breathing room above the footer on tall pages (where the auto margin resolves to 0 instead of 2rem). Not an issue here — `.calendar-section` (the element directly above the footer) already has `padding: 3rem 2rem 4rem` baked in independently, so there's still a solid visual gap before the footer regardless of what the footer's own margin resolves to.
+
+Verified with `npx vite build` — compiles clean.
+
+### 14.4 Why this needed fixing now specifically
+
+This bug existed before the scroll-panel work, but capping the growing sections (section 12) makes content height *more* likely to fall short of the viewport going forward — meaning this bug would have surfaced more and more often as those sections filled up and stopped pushing the page taller indefinitely. Fixing it now closes that gap properly rather than leaving it to resurface unpredictably later.

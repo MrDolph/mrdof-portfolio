@@ -32,7 +32,7 @@
 
 /* ---- Reset ---- */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; height: 100%; }
 
 body {
     font-family: 'Inter', sans-serif;
@@ -40,6 +40,20 @@ body {
     color: var(--text);
     line-height: 1.6;
     transition: background 0.3s ease, color 0.3s ease;
+    min-height: 100%;
+}
+
+/* ---- Sticky footer ----
+   #root spans at least the full viewport height; the footer gets
+   pushed to the bottom via margin-top: auto when content is short
+   (e.g. some tabs), and flows naturally after content when it's
+   taller than the viewport (e.g. Blog with several posts). This
+   keeps footer position consistent across all tabs instead of only
+   looking "stuck" on whichever tab happens to be tallest. */
+#root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* ---- Page wrapper ---- */
@@ -779,7 +793,7 @@ body {
    ============================================ */
 .footer {
     background: var(--primary); color: #fff;
-    text-align: center; padding: 2.5rem 1rem; margin-top: 2rem;
+    text-align: center; padding: 2.5rem 1rem; margin-top: auto;
 }
 
 .contact { display: flex; justify-content: center; gap: 2rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
@@ -1375,4 +1389,109 @@ body {
     pointer-events: auto;
     position: relative;
     z-index: 5;
+}
+/* ============================================================
+   SCROLL PANELS
+   Reusable bounded-height scroll container for any section
+   whose content count grows over time (certs, projects,
+   testimonials, experience, research, GitHub repos, videos).
+   Wraps the existing grid/list element — does not replace it.
+   ============================================================ */
+
+.scroll-panel {
+    position: relative;
+}
+
+.scroll-panel-viewport {
+    max-height: var(--panel-h, 560px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: var(--secondary) transparent;
+    padding-right: 0.4rem; /* keep cards clear of the scrollbar */
+    margin-right: -0.4rem;
+}
+
+.scroll-panel--lg .scroll-panel-viewport { --panel-h: 680px; }
+
+.scroll-panel-viewport::-webkit-scrollbar { width: 8px; }
+.scroll-panel-viewport::-webkit-scrollbar-track { background: transparent; }
+.scroll-panel-viewport::-webkit-scrollbar-thumb {
+    background: var(--secondary);
+    border-radius: 999px;
+}
+[data-theme="dark"] .scroll-panel-viewport::-webkit-scrollbar-thumb { opacity: 0.85; }
+
+/* Fade hints — only visible when there's actually more content that way */
+.scroll-fade {
+    position: absolute;
+    left: 0;
+    right: 0.9rem;
+    height: 36px;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.scroll-fade-top {
+    top: 0;
+    background: linear-gradient(to bottom, var(--light), transparent);
+}
+.scroll-fade-bottom {
+    bottom: 0;
+    background: linear-gradient(to top, var(--light), transparent);
+}
+.scroll-panel.is-scrolled .scroll-fade-top,
+.scroll-panel.has-more-below .scroll-fade-bottom {
+    opacity: 1;
+}
+
+/* Nav buttons — sit outside the scrolling element so they stay put */
+.scroll-nav {
+    position: absolute;
+    right: -0.4rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: var(--card-bg);
+    color: var(--text);
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 3;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(4px);
+    transition: var(--transition);
+}
+.scroll-nav:hover { background: var(--secondary); color: var(--primary); border-color: var(--secondary); }
+.scroll-nav-up { top: -8px; }
+.scroll-nav-down { bottom: -8px; }
+
+.scroll-panel.is-scrolled .scroll-nav-up,
+.scroll-panel.has-more-below .scroll-nav-down {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+/* No JS / no-scroll-needed fallback: native scrollbar still works fine */
+.scroll-panel-viewport:focus-visible { outline: 2px solid var(--secondary); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+    .scroll-panel-viewport { scroll-behavior: auto; }
+    .scroll-nav { transition: none; }
+}
+
+/* Mobile: shorter panels, hide the floating nav buttons since touch
+   scrolling is the natural interaction; fades stay as a visual hint */
+@media (max-width: 768px) {
+    .scroll-panel-viewport { max-height: var(--panel-h-mobile, 420px) !important; }
+    .scroll-panel--lg .scroll-panel-viewport { --panel-h-mobile: 480px; }
+    .scroll-nav { display: none; }
 }

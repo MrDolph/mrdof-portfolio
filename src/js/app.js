@@ -7,6 +7,7 @@ import { initFooter } from './footer.js';
 import { initScroll } from './scroll.js';
 import { initGitHubProjects } from './github.js';
 import { initPaystack, initCalendar } from './paystack.js';
+import { initScrollPanels } from './scrollPanels.js';
 import {
   initParticles,
   initGradientMesh,
@@ -27,6 +28,7 @@ export function initApp() {
   initModal();
   initFooter();
   initScroll();
+  initScrollPanels();
 
   // Animations (before content loads)
   initGradientMesh();
