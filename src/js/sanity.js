@@ -15,6 +15,20 @@ function sanityUrl(query) {
     + '/data/query/' + DATASET + '?query=' + encoded;
 }
 
+// ─── CATEGORY DISPLAY ──────────────────────────────────────
+// Legacy slug -> readable label, kept only for posts saved before
+// the category field switched to free text (see studio/schemas/post.js).
+// New posts just type a label directly, so this falls through to
+// the raw value for anything not in this map.
+var catLabels = {
+  physics: 'Physics & Science', edtech: 'EdTech & Education', dev: 'Web Development',
+  afacsims: 'AfacSIMS', 'nigerian-tech': 'Nigerian Tech',
+  va: 'Virtual Assistant', career: 'Career & Life'
+};
+function formatCategory(cat) {
+  return catLabels[cat] || cat || '';
+}
+
 function imageUrl(asset) {
   if (!asset || !asset._ref) return '';
   var ref   = asset._ref;
@@ -170,14 +184,8 @@ export function initBlogList() {
         return;
       }
 
-      var catLabels = {
-        physics: 'Physics & Science', edtech: 'EdTech', dev: 'Web Dev',
-        afacsims: 'AfacSIMS', 'nigerian-tech': 'Nigerian Tech',
-        va: 'Virtual Assistant', career: 'Career'
-      };
-
       grid.innerHTML = posts.map(function(p, i) {
-        var cat    = catLabels[p.category] || p.category || '';
+        var cat    = formatCategory(p.category);
         var imgSrc = (p.coverImage && p.coverImage.asset) ? imageUrl(p.coverImage.asset) : '';
         var imgHtml = imgSrc
           ? '<div class="blog-thumb-wrap"><img src="' + imgSrc + '" alt="' + p.title + '" class="blog-thumb"></div>'
@@ -233,7 +241,7 @@ function openBlogPost(slug, grid, reader) {
         + '<button class="reader-back" id="readerBack">← Back to Blog</button>'
         + imgHtml
         + '<div class="reader-meta">'
-        + (post.category ? '<span class="blog-cat">' + post.category + '</span>' : '')
+        + (post.category ? '<span class="blog-cat">' + formatCategory(post.category) + '</span>' : '')
         + '<span class="blog-date">' + formatDate(post.publishedAt) + '</span>'
         + (post.readTime ? '<span class="blog-read">' + post.readTime + ' min read</span>' : '')
         + '</div>'

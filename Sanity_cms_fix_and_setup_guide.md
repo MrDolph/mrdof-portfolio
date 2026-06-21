@@ -285,6 +285,7 @@ git push origin main
 - [ ] Favicon (`/mrdof-logo.svg`) loads correctly on both local dev and the live Vercel site
 - [ ] Certificates/Projects/GitHub/YouTube/Testimonials/Experience/Research sections cap their height and become scrollable once they have enough items to overflow (test by temporarily adding extra dummy items if needed); nav arrows and fade hints appear on desktop, disappear on mobile
 - [ ] Footer sits flush against the bottom of the viewport on every tab (About Me, Portfolio, Blog), even when a tab's content is short — not just on Blog
+- [ ] Credentials pills are visibly smaller/lighter than the hardcoded skill pills, and the Credentials section has the same spacing/divider treatment as Experience/Research/Testimonials above and below it
 
 If you share the live Studio URL once you've deployed, I can check it loads correctly from my end too.
 
@@ -491,3 +492,41 @@ Verified with `npx vite build` — compiles clean.
 ### 14.4 Why this needed fixing now specifically
 
 This bug existed before the scroll-panel work, but capping the growing sections (section 12) makes content height *more* likely to fall short of the viewport going forward — meaning this bug would have surfaced more and more often as those sections filled up and stopped pushing the page taller indefinitely. Fixing it now closes that gap properly rather than leaving it to resurface unpredictably later.
+
+---
+
+## 15. Styling Fix: Credentials strip (sizing + section spacing)
+
+The Credentials strip (`#credentials-strip`, populated from Sanity via `initCredentials()` in `sanity.js`) was positioned correctly relative to the rest of the page, but had two separate styling problems compared to its neighbors.
+
+### 15.1 Pills were heavier/bigger than the hardcoded skill pills
+
+The reference point was `.skill` (the hardcoded pills in the bio — "Full Stack Web Development" etc.). `.credential-pill`'s raw `font-size` was actually marginally *smaller* than `.skill`'s (0.78rem vs 0.8rem), which is why the problem wasn't obvious from font-size alone — but it carried a bolder `font-weight` (700 vs 600), more padding, and a noticeably stronger glow shadow, and that combination made it read as visually bulkier despite the close font-size.
+
+**`src/css/cms.css`** — `.credential-pill`:
+
+| | Skills (reference) | Before | After |
+|---|---|---|---|
+| font-size | 0.8rem | 0.78rem | 0.68rem |
+| font-weight | 600 | 700 | 600 |
+| padding | 0.35rem 1rem | 0.4rem 1rem | 0.25rem 0.7rem |
+| shadow | none | strong gold glow | faint |
+
+Mobile breakpoint (768px) updated to scale proportionally from the new smaller base: `font-size: 0.6rem; padding: 0.2rem 0.6rem` (was `font-size: 0.74rem` only, inherited from the old bigger base).
+
+### 15.2 No section spacing/margin treatment like its siblings
+
+Experience, Research, and Testimonials are each wrapped in a shared `.cms-section` div — 1100px max-width, `margin: 0 auto`, `padding: 3rem 0 2rem`, plus a subtle top divider line, with its own responsive padding at the 768px and 480px breakpoints. Credentials was a bare `<div>` with a one-off `padding: 1rem 0 2.5rem` (zero horizontal padding) that never went through that shared treatment, which is why it looked visually out of step with the sections around it even though its position in the page flow was correct.
+
+**`index.html`** — added the `cms-section` class onto the credentials-strip element:
+```html
+<!-- before -->
+<div id="credentials-strip" class="credentials-strip"></div>
+
+<!-- after -->
+<div id="credentials-strip" class="credentials-strip cms-section"></div>
+```
+
+**`src/css/cms.css`** — `.credentials-strip` now only carries the flex pill-row layout (`display: flex; flex-wrap: wrap; gap: 0.6rem`); all spacing/width/divider comes from the inherited `.cms-section` class. Removed two now-redundant mobile-only padding rules that were specific to `.credentials-strip` (one at 768px, one at 480px) — they'd have conflicted with the inherited `.cms-section` padding at those same breakpoints otherwise.
+
+Verified with `npx vite build` — compiles clean.

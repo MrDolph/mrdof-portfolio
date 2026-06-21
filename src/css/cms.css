@@ -61,26 +61,28 @@
 
 /* ============================================================
    CREDENTIALS STRIP
+   Shares .cms-section's spacing/border rhythm (added in HTML
+   alongside credentials-strip) — only the flex pill-row layout
+   stays specific to this class.
    ============================================================ */
 .credentials-strip {
     display: flex;
     flex-wrap: wrap;
     gap: 0.6rem;
-    padding: 1rem 0 2.5rem;
 }
 
 .credential-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     background: var(--secondary);
     color: var(--primary);
-    font-size: 0.78rem;
-    font-weight: 700;
-    padding: 0.4rem 1rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    padding: 0.25rem 0.7rem;
     border-radius: 50px;
     white-space: nowrap;
-    box-shadow: 0 2px 8px rgba(255,215,0,0.2);
+    box-shadow: 0 1px 4px rgba(255,215,0,0.15);
 }
 
 /* ============================================================
@@ -740,8 +742,6 @@
     .cms-section { padding: 2rem 1rem 1rem; }
     .cms-section-header { margin-bottom: 1.5rem; }
 
-    .credentials-strip { padding: 0.75rem 1rem 2rem; }
-
     .testimonials-grid { grid-template-columns: 1fr; }
     .testi-card { padding: 1.25rem; }
 
@@ -766,7 +766,7 @@
     .exp-header { flex-direction: column; gap: 0.4rem; }
     .exp-meta { align-items: flex-start; flex-direction: row; gap: 0.5rem; }
 
-    .credential-pill { font-size: 0.74rem; }
+    .credential-pill { font-size: 0.6rem; padding: 0.2rem 0.6rem; }
     .cms-section-title { font-size: 1rem; }
 }
 
@@ -774,7 +774,6 @@
     .cms-section { padding: 1.5rem 0.875rem 0.75rem; }
     .blog-section-wrap { padding: 1.25rem 0.875rem 1.5rem; }
     .blog-reader-inner { padding: 1rem 0.875rem 1.5rem; }
-    .credentials-strip { padding: 0.5rem 0.875rem 1.5rem; }
     .testi-card { padding: 1rem; }
     .research-card { padding: 1rem; }
     .exp-content { padding: 0.875rem 1rem; }
